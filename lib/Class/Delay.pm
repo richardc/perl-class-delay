@@ -79,4 +79,41 @@ Class::Delay - delay method dispatch until a trigerring event
 
 =head1 DESCRIPTION
 
+Class::Delay provides a mechanism for the delay of method dispatch
+until a triggering method is called.
+
+You simply define a proxy class, and then call on the module to set up
+a set of methods that will defer.
+
+=head2 Options
+
+The use statement takes the following options when to generate.
+
+=over
+
+=item methods
+
+An array reference naming the methods to delay until a trigger event.
+
+=item release
+
+An array reference naming the methods to ise as triggering events.
+
+=back
+
+An extended example of this module is in L<Mariachi::DBI> which uses
+the module to delay database setup until the final of the database is
+known.
+
+=head1 AUTHOR
+
+Richard Clamp <richardc@unixbeard.net>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2003 Richard Clamp. All Rights Reserved.
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
 =cut
