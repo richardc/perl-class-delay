@@ -1,9 +1,10 @@
 use strict;
 package Class::Delay;
+require Class::Delay::Message;
 
 our $VERSION = '0.01';
 
-my @deferred;
+my @delayed;
 sub import {
     my $package = caller;
     my $class   = shift;
@@ -12,9 +13,10 @@ sub import {
     for my $method (@{ $args{methods} }) {
         no strict 'refs';
         *{"$package\::$method"} = sub {
-            push @deferred, {
+            push @delayed, Class::Delay::Message->new({
+                package => $package,
                 method  => $method,
-                args    => [ @_ ] };
+                args    => [ @_ ] });
             return 1;
         };
     }
@@ -27,7 +29,7 @@ sub import {
 
             # redispatch all the old stuff
             use Data::Dumper;
-            for my $delayed (@deferred) {
+            for my $delayed (@delayed) {
                 warn Dumper $delayed;
                 my $invocant = shift @{ $delayed->{args} };
                 my $method   = $delayed->{method};
