@@ -9,9 +9,9 @@ BEGIN { @methods = qw( foo bar baz ) }
 # testing packages
 package Doer;
 
-for (@methods, 'doit') {
+for my $method (@methods, 'doit') {
     no strict 'refs';
-    *{"Doer::$_"} = sub { push @done, $_ };
+    *{"Doer::$method"} = sub { push @done, $method };
 }
 
 package Waiter;
