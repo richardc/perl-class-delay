@@ -11,6 +11,7 @@ sub import {
 
     my @delayed;
     my @methods = @{ $args{methods} };
+    my $return  = $args{return} || 1;
     for my $method (@methods) {
         no strict 'refs';
         *{"$package\::$method"} = sub {
@@ -18,7 +19,7 @@ sub import {
                 package => $package,
                 method  => $method,
                 args    => [ @_ ] });
-            return 1;
+            return $return;
         };
     }
 
@@ -87,13 +88,18 @@ a set of methods that will defer.
 
 =head2 Options
 
-The use statement takes the following options when to generate.
+The use statement takes the following options when generate the
+proxying behaviour.
 
 =over
 
 =item methods
 
 An array reference naming the methods to delay until a trigger event.
+
+=item return
+
+What a delayed method will return, defaults to 1.
 
 =item release
 
