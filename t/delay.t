@@ -2,7 +2,6 @@
 use strict;
 use Test::More tests => 5;
 
-my $class = 'Class::Deferred';
 my @done;
 my @methods;
 BEGIN { @methods = qw( foo bar baz ) }
@@ -27,7 +26,7 @@ for (@methods, 'doit') {
 
 package Waiter;
 our @ISA = 'Doer';
-use Class::Deferred
+use Class::Delay
   methods => \@methods,
   release => [qw( doit )];
 

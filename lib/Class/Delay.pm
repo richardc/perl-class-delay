@@ -1,5 +1,5 @@
 use strict;
-package Class::Deferred;
+package Class::Delay;
 
 our $VERSION = '0.01';
 

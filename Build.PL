@@ -2,7 +2,7 @@ use strict;
 use Module::Build;
 
 Module::Build->new(
-    module_name => "Class::Deferred",
+    module_name => "Class::Delay",
     license     => 'perl',
     requires    => {
         'Test::More' => 0,
