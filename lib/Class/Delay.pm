@@ -1,7 +1,6 @@
 use strict;
 package Class::Delay;
 require Class::Delay::Message;
-
 our $VERSION = '0.01';
 
 sub import {
@@ -16,13 +15,16 @@ sub import {
         no strict 'refs';
         *{"$package\::$method"} = sub {
             push @delayed, Class::Delay::Message->new({
-                package => $package,
-                method  => $method,
-                args    => [ @_ ] });
+                package    => $package,
+                method     => $method,
+                args       => [ @_ ],
+                is_trigger => 0,
+            });
             return $return;
         };
     }
 
+    my $reorder = $args{reorder};
     my @triggers = @{ $args{release} };
     for my $method (@triggers) {
         my $sub = sub {
@@ -34,11 +36,16 @@ sub import {
                 *{"$package\::$method"} = *newglob;
             }
 
-            # redispatch all the old stuff
-            $_->resume for @delayed;
+            push @delayed, Class::Delay::Message->new({
+                package    => $package,
+                method     => $method,
+                args       => [ $self, @_ ],
+                is_trigger => 1,
+            });
 
-            # and redispatch the triggering event
-            $package->$method(@_);
+            @delayed = $reorder->( @delayed ) if $reorder;
+            # redispatch them in their new order
+            $_->resume for @delayed;
         };
 
         no strict 'refs';
@@ -104,6 +111,20 @@ What a delayed method will return, defaults to 1.
 =item release
 
 An array reference naming the methods to ise as triggering events.
+
+=item reorder
+
+A subroutine that will be passed the all the delayed messages as
+L<Class::Delay::Message> objects.  The routine should return these in
+the order that the messagages are to be deilvered.
+
+For example, if we want to ensure our trigger event arrives before the
+rest of the events we may do something like this:
+
+ use Class::Delay
+    methods => [qw( foo bar baz )],
+    release => [qw( quux squirkle )],
+    reorder => sub { sort { $b->is_trigger <=> $a->is_trigger } @_ };
 
 =back
 

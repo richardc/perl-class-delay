@@ -1,7 +1,7 @@
 use strict;
 package Class::Delay::Message;
 use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors(qw( package method args ));
+__PACKAGE__->mk_accessors(qw( package method args is_trigger ));
 
 sub resume {
     my $self = shift;
