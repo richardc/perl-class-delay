@@ -1,5 +1,6 @@
 Makefile.PL
 Build.PL
+META.yml
 README
 Changes
 MANIFEST
