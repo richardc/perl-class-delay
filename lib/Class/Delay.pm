@@ -46,6 +46,7 @@ sub import {
             @delayed = $reorder->( @delayed ) if $reorder;
             # redispatch them in their new order
             $_->resume for @delayed;
+            return $return;
         };
 
         no strict 'refs';
