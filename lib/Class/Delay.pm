@@ -30,10 +30,11 @@ sub import {
             # redispatch all the old stuff
             use Data::Dumper;
             for my $delayed (@delayed) {
+                my @args = @{ $delayed->args };
                 warn Dumper $delayed;
-                my $invocant = shift @{ $delayed->{args} };
-                my $method   = $delayed->{method};
-                $invocant->$method( @{ $delayed->{args} } );
+                my $invocant = shift @args;
+                my $method   = $delayed->method;
+                $invocant->$method( @args );
             }
 
             # splice ourselves out of the isa
