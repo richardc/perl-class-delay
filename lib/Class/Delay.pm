@@ -4,13 +4,14 @@ require Class::Delay::Message;
 
 our $VERSION = '0.01';
 
-my @delayed;
 sub import {
     my $package = caller;
     my $class   = shift;
     my %args    = @_;
 
-    for my $method (@{ $args{methods} }) {
+    my @delayed;
+    my @methods = @{ $args{methods} };
+    for my $method (@methods) {
         no strict 'refs';
         *{"$package\::$method"} = sub {
             push @delayed, Class::Delay::Message->new({
@@ -21,25 +22,21 @@ sub import {
         };
     }
 
-    for my $method (@{ $args{release} }) {
+    my @triggers = @{ $args{release} };
+    for my $method (@triggers) {
         my $sub = sub {
             my $self = shift;
             # delete our placeholders
-
-
-            # redispatch all the old stuff
-            use Data::Dumper;
-            for my $delayed (@delayed) {
-                my @args = @{ $delayed->args };
-                warn Dumper $delayed;
-                my $invocant = shift @args;
-                my $method   = $delayed->method;
-                $invocant->$method( @args );
+            for my $method (@methods, @triggers) {
+                no strict 'refs';
+                local *newglob;
+                *{"$package\::$method"} = *newglob;
             }
 
-            # splice ourselves out of the isa
+            # redispatch all the old stuff
+            $_->resume for @delayed;
 
-            # and redipatch the triggering event
+            # and redispatch the triggering event
             return 1;
         };
 
