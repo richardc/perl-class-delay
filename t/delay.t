@@ -1,6 +1,6 @@
 #!perl -w
 use strict;
-use Test::More tests => 5;
+use Test::More tests => 10;
 
 my @done;
 my @methods;

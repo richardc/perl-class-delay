@@ -37,7 +37,7 @@ sub import {
             $_->resume for @delayed;
 
             # and redispatch the triggering event
-            return 1;
+            $package->$method(@_);
         };
 
         no strict 'refs';
